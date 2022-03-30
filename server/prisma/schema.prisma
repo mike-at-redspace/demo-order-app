@@ -1,0 +1,77 @@
+datasource postgres {
+  provider = "postgresql"
+  url      = env("POSTGRESQL_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  createdAt DateTime @default(now())
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     String[]
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+model Customer {
+  billingAddress   Address? @relation(name: "AddressBillingAddressCustomerBillingAddress", fields: [billingAddressId], references: [id])
+  billingAddressId String?
+  createdAt        DateTime @default(now())
+  id               String   @id @default(cuid())
+  name             String?
+  orders           Order[]
+  shippingAdress   Address? @relation(name: "customers", fields: [shippingAdressId], references: [id])
+  shippingAdressId String?
+  updatedAt        DateTime @updatedAt
+}
+
+model Address {
+  line1          String?
+  line2          String?
+  billingAddress Customer[] @relation(name: "AddressBillingAddressCustomerBillingAddress")
+  city           String?
+  createdAt      DateTime   @default(now())
+  customers      Customer[] @relation(name: "customers")
+  id             String     @id @default(cuid())
+  postalCode     String?
+  province       String?
+  updatedAt      DateTime   @updatedAt
+}
+
+model Item {
+  createdAt   DateTime    @default(now())
+  description String?
+  id          String      @id @default(cuid())
+  imageUrl    String?
+  name        String?
+  orderItems  OrderItem[]
+  price       Float?
+  updatedAt   DateTime    @updatedAt
+}
+
+model OrderItem {
+  createdAt DateTime @default(now())
+  discount  Float?
+  id        String   @id @default(cuid())
+  item      Item?    @relation(fields: [itemId], references: [id])
+  itemId    String?
+  order     Order?   @relation(fields: [orderId], references: [id])
+  orderId   String?
+  price     Float?
+  qty       Int?
+  updatedAt DateTime @updatedAt
+}
+
+model Order {
+  createdAt  DateTime    @default(now())
+  customer   Customer?   @relation(fields: [customerId], references: [id])
+  customerId String?
+  id         String      @id @default(cuid())
+  orderItems OrderItem[]
+  updatedAt  DateTime    @updatedAt
+}
