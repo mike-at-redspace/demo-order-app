@@ -1,6 +1,6 @@
 {
-  "short_name": "My app-1",
-  "name": "My app-1",
+  "short_name": "Demo Ordering App",
+  "name": "Ordering App",
   "icons": [
     {
       "src": "favicon.ico",
